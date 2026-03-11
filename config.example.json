@@ -1,0 +1,59 @@
+{
+  "version": "1.0.0",
+  "paths": {
+    "base": "/Users/VOTRE_NOM/Documents/VeilleScientifique",
+    "pdfs": "/Users/VOTRE_NOM/Documents/VeilleScientifique/pdfs",
+    "pdfs_auto": "/Users/VOTRE_NOM/Documents/VeilleScientifique/pdfs/auto",
+    "pdfs_manual": "/Users/VOTRE_NOM/Documents/VeilleScientifique/pdfs/manual",
+    "summaries": "/Users/VOTRE_NOM/Documents/VeilleScientifique/resumes",
+    "excel": "/Users/VOTRE_NOM/Documents/VeilleScientifique/veille.xlsx",
+    "logs": "/Users/VOTRE_NOM/Documents/VeilleScientifique/logs"
+  },
+  "domains": [
+    {
+      "short": "ME",
+      "name": "Mémoire Épisodique",
+      "keywords": [
+        "episodic memory",
+        "episodic memory encoding",
+        "episodic memory retrieval"
+      ]
+    },
+    {
+      "short": "MA",
+      "name": "Maladie d'Alzheimer",
+      "keywords": [
+        "Alzheimer's disease",
+        "Alzheimer disease"
+      ]
+    }
+  ],
+  "combinations": [
+    {
+      "short": "ME x MA",
+      "name": "Mémoire Épisodique × Maladie d'Alzheimer",
+      "domains": ["ME", "MA"]
+    }
+  ],
+  "ollama": {
+    "model": "mistral",
+    "base_url": "http://localhost:11434"
+  },
+  "zotero": {
+    "enabled": false,
+    "base_url": "http://localhost:23119",
+    "library_type": "user",
+    "collection": "",
+    "port": 23119
+  },
+  "scheduler": {
+    "day": "lundi",
+    "time": "08:00",
+    "notifications": true
+  },
+  "pubmed": {
+    "email": "",
+    "max_results": 50,
+    "base_url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/"
+  }
+}

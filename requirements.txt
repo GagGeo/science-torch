@@ -1,0 +1,24 @@
+# Veille Scientifique — Dépendances Python
+# Toutes compatibles Python 3.14+, aucune compilation C requise
+
+# Interface macOS barre de menu
+rumps==0.4.0
+
+# Excel
+openpyxl==3.1.2
+
+# Requêtes HTTP (PubMed, Ollama, Zotero)
+requests==2.31.0
+
+# PDF (100% Python pur)
+pypdf==4.1.0
+
+# Scheduling
+schedule==1.2.1
+
+# Zotero
+pyzotero==1.5.18
+
+# Utilitaires
+python-dotenv==1.0.1
+questionary==2.0.1
