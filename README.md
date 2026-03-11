@@ -1,83 +1,108 @@
-# 🔬 Veille Scientifique Automatisée
+# 🔬 Science Watch — Automated Scientific Literature Monitor
 
-Application de veille scientifique automatisée pour chercheurs, avec recherche PubMed, analyse par LLM local (Ollama), intégration Zotero et interface barre de menu macOS.
+*[Français ci-dessous](#français)*
 
-## Fonctionnalités
+---
 
-- 🔍 Recherche automatique hebdomadaire sur PubMed
-- 🤖 Analyse et résumé structuré via Ollama (LLM local, gratuit)
-- 📊 Export Excel avec onglets thématiques modulaires
-- 📚 Synchronisation automatique avec Zotero + Better BibTeX
-- 📥 Téléchargement automatique des PDFs open access
-- 🖥️ Application barre de menu macOS discrète
-- 🔔 Notifications macOS
-- 📋 Résumés hebdomadaires automatiques
-- 📄 Support articles expérimentaux ET revues de littérature
+## English
 
-## Prérequis
+**Science Watch** is a free, privacy-first tool for researchers who want to stay up to date with scientific literature — without spending hours on PubMed every week.
 
-- macOS (Tahoe ou supérieur recommandé)
+### Features
+
+- 🔍 **Automatic weekly PubMed search** across your research domains
+- 🤖 **Local LLM analysis** via [Ollama](https://ollama.ai) — free, offline, private
+- 📊 **Modular Excel database** with thematic tabs (experimental articles + literature reviews)
+- 📚 **Zotero sync** with automatic BibTeX key generation
+- 📥 **Manual PDF import** with drag-and-drop
+- 📋 **Weekly Markdown summaries**
+- 🖥️ **macOS menu bar app** — discreet, always running in the background
+- 🔔 **macOS notifications** when new articles are found
+
+### How it works
+
+1. You define your research domains and PubMed keywords
+2. Every Monday morning, the app searches PubMed automatically
+3. Each article is analyzed by a local LLM (Mistral) — hypothesis, population, methods, results, take-home message
+4. Articles are added to your Excel file and Zotero library
+5. A summary report is generated
+6. You receive a macOS notification
+
+### Requirements
+
+- macOS
 - Python 3.9+
-- [Ollama](https://ollama.ai) installé avec au moins un modèle (ex: `ollama pull mistral`)
-- [Zotero](https://www.zotero.org) + plugin [Better BibTeX](https://retorque.re/zotero-better-bibtex/) (optionnel)
+- [Ollama](https://ollama.ai) with `mistral` model (`ollama pull mistral`)
+- [Zotero](https://zotero.org) + [Better BibTeX](https://retorque.re/zotero-better-bibtex/) (optional)
 
-## Installation
-
-```bash
-git clone https://github.com/votre-compte/veille-scientifique.git
-cd veille-scientifique
-python setup.py
-```
-
-Le script `setup.py` guidera la configuration initiale.
-
-## Utilisation
+### Installation
 
 ```bash
-python main.py
+git clone https://github.com/GagGeo/science-torch.git
+cd science-torch
+bash install.sh   # installs dependencies + runs configuration wizard
+bash build.sh     # creates Science Watch.app on your desktop
 ```
 
-L'application apparaît dans la barre de menu (icône 🔬). Cliquer pour :
-- Lancer une recherche manuelle
-- Ajouter un PDF manuellement
-- Voir le dernier résumé hebdomadaire
-- Accéder aux paramètres
+See [INSTALLATION_GUIDE.md](INSTALLATION_GUIDE.md) for detailed instructions.
 
-## Structure du projet
+### Built with
 
+- [PubMed E-utilities API](https://www.ncbi.nlm.nih.gov/home/develop/api/) — free, no key required
+- [Ollama](https://ollama.ai) — local LLM inference
+- [rumps](https://github.com/jaredks/rumps) — macOS menu bar
+- [openpyxl](https://openpyxl.readthedocs.io) — Excel generation
+- [pyzotero](https://pyzotero.readthedocs.io) — Zotero integration
+- [pypdf](https://pypdf.readthedocs.io) — PDF parsing
+
+### License
+
+MIT — free to use, modify and distribute.
+
+---
+
+## Français
+
+**Science Watch** est un outil gratuit et respectueux de la vie privée pour les chercheurs qui souhaitent assurer leur veille bibliographique sans passer des heures sur PubMed chaque semaine.
+
+### Fonctionnalités
+
+- 🔍 **Recherche PubMed hebdomadaire automatique** sur vos domaines de recherche
+- 🤖 **Analyse par LLM local** via [Ollama](https://ollama.ai) — gratuit, hors ligne, privé
+- 📊 **Fichier Excel modulaire** avec onglets thématiques (articles expérimentaux + revues de littérature)
+- 📚 **Synchronisation Zotero** avec génération automatique des clés BibTeX
+- 📥 **Import manuel de PDFs** par drag-and-drop
+- 📋 **Résumés hebdomadaires** en Markdown
+- 🖥️ **App barre de menu macOS** — discrète, tourne en arrière-plan
+- 🔔 **Notifications macOS** à chaque nouveaux articles trouvés
+
+### Comment ça marche
+
+1. Vous définissez vos domaines de recherche et mots-clés PubMed
+2. Chaque lundi matin, l'app interroge PubMed automatiquement
+3. Chaque article est analysé par un LLM local (Mistral) — hypothèse, population, méthode, résultats, take-home message
+4. Les articles sont ajoutés à votre fichier Excel et à Zotero
+5. Un résumé hebdomadaire est généré
+6. Vous recevez une notification macOS
+
+### Prérequis
+
+- macOS
+- Python 3.9+
+- [Ollama](https://ollama.ai) avec le modèle `mistral` (`ollama pull mistral`)
+- [Zotero](https://zotero.org) + [Better BibTeX](https://retorque.re/zotero-better-bibtex/) (optionnel)
+
+### Installation
+
+```bash
+git clone https://github.com/GagGeo/science-torch.git
+cd science-torch
+bash install.sh
+bash build.sh
 ```
-veille_scientifique/
-├── main.py                  # Point d'entrée principal
-├── setup.py                 # Configuration initiale interactive
-├── config.json              # Configuration utilisateur (généré par setup.py)
-├── core/
-│   ├── pubmed.py            # Moteur de recherche PubMed
-│   ├── ollama_client.py     # Interface Ollama (LLM local)
-│   ├── excel_manager.py     # Gestion du fichier Excel
-│   ├── zotero_client.py     # Intégration Zotero
-│   ├── pdf_manager.py       # Téléchargement et gestion des PDFs
-│   └── scheduler.py         # Tâche hebdomadaire automatique
-├── ui/
-│   ├── menu_bar.py          # Application barre de menu macOS
-│   └── pdf_drop.py          # Fenêtre drag-and-drop PDF
-├── utils/
-│   ├── logger.py            # Logging
-│   └── helpers.py           # Fonctions utilitaires
-└── output_templates/
-    └── weekly_summary.md    # Template résumé hebdomadaire
-```
 
-## Configuration
+Voir [GUIDE_INSTALLATION.md](GUIDE_INSTALLATION.md) pour les instructions détaillées.
 
-Editer `config.json` pour modifier :
-- Domaines et mots-clés
-- Fréquence de recherche
-- Dossier de stockage des PDFs
-- Modèle Ollama utilisé
+### Licence
 
-## Distribution
-
-Pour partager avec un collègue :
-1. Cloner le dépôt GitHub
-2. Lancer `python setup.py` pour une nouvelle configuration personnalisée
-3. S'assurer qu'Ollama est installé sur la machine cible
+MIT — libre d'utilisation, modification et distribution.

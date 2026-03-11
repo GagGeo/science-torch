@@ -1,5 +1,6 @@
 {
   "version": "1.0.0",
+  "language": "en",
   "paths": {
     "base": "/Users/VOTRE_NOM/Documents/VeilleScientifique",
     "pdfs": "/Users/VOTRE_NOM/Documents/VeilleScientifique/pdfs",
@@ -32,7 +33,10 @@
     {
       "short": "ME x MA",
       "name": "Mémoire Épisodique × Maladie d'Alzheimer",
-      "domains": ["ME", "MA"]
+      "domains": [
+        "ME",
+        "MA"
+      ]
     }
   ],
   "ollama": {
