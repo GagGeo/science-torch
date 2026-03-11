@@ -1,8 +1,8 @@
-# 🔬 Veille Scientifique — Guide d'installation
+# 🔬 Science Torch — Guide d'installation
 
 ## Ce que fait cette application
 
-Veille Scientifique est un outil de veille bibliographique automatisée. Chaque semaine, elle :
+Science Torch est un outil de veille bibliographique automatisée. Chaque semaine, elle :
 - Recherche automatiquement les nouveaux articles sur **PubMed** selon vos domaines d'intérêt
 - Analyse et résume chaque article grâce à un **LLM local** (Ollama — gratuit, privé, sans internet)
 - Met à jour un **fichier Excel** structuré avec toutes les informations clés
@@ -64,13 +64,13 @@ Le wizard vous posera quelques questions :
 ```
 bash build.sh
 ```
-Cela crée **Veille Scientifique.app** directement sur votre bureau.
+Cela crée **Science Torch.app** directement sur votre bureau.
 
 ---
 
 ## Lancement
 
-Double-cliquez sur **Veille Scientifique.app** sur votre bureau.
+Double-cliquez sur **Science Torch.app** sur votre bureau.
 
 Si macOS affiche "développeur non identifié" la première fois :
 → Clic droit sur l'app → Ouvrir → Ouvrir quand même.
@@ -97,9 +97,9 @@ Cliquer sur l'icône 🔬 pour accéder au menu :
 
 ## Vos fichiers
 
-Tous vos fichiers sont dans Documents/VeilleScientifique/ :
+Tous vos fichiers sont dans Documents/ScienceTorch/ :
 ```
-Documents/VeilleScientifique/
+Documents/ScienceTorch/
 ├── veille.xlsx          ← fichier Excel principal
 ├── pdfs/
 │   ├── auto/            ← PDFs open access téléchargés automatiquement

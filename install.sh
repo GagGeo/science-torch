@@ -1,5 +1,5 @@
 #!/bin/bash
-# install.sh — Installation automatique de Veille Scientifique
+# install.sh — Installation automatique de Science Torch
 # Usage : bash install.sh
 
 set -e
@@ -13,7 +13,7 @@ RESET="\033[0m"
 
 echo -e "${CYAN}${BOLD}"
 echo "╔══════════════════════════════════════════════════════╗"
-echo "║      🔬  Installation — Veille Scientifique         ║"
+echo "║      🔬  Installation — Science Torch         ║"
 echo "╚══════════════════════════════════════════════════════╝"
 echo -e "${RESET}"
 
@@ -54,7 +54,7 @@ fi
 echo -e "\n${BOLD}4. Vérification Ollama...${RESET}"
 if command -v ollama &> /dev/null; then
     echo -e "${GREEN}✓ Ollama détecté${RESET}"
-    
+
     # Vérifier si un modèle est disponible
     MODELS=$(ollama list 2>/dev/null | tail -n +2 | wc -l | tr -d ' ')
     if [ "$MODELS" -eq "0" ]; then

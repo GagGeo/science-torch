@@ -1,5 +1,5 @@
 #!/bin/bash
-# build.sh — Crée le lanceur .app et le .dmg pour Veille Scientifique
+# build.sh — Crée le lanceur .app et le .dmg pour Science Torch
 # Usage : bash build.sh
 
 set -e
@@ -11,18 +11,18 @@ YELLOW="\033[93m"
 RED="\033[91m"
 RESET="\033[0m"
 
-APP_NAME="Veille Scientifique"
+APP_NAME="Science Torch"
 APP_VERSION="1.0.0"
 DIST_DIR="dist"
-DMG_NAME="VeilleScientifique-${APP_VERSION}.dmg"
+DMG_NAME="ScienceTorch-${APP_VERSION}.dmg"
 PROJECT_PATH="$(cd "$(dirname "$0")" && pwd)"
 VENV_PYTHON="$PROJECT_PATH/.venv/bin/python3"
 VENV_ACTIVATE="$PROJECT_PATH/.venv/bin/activate"
-LOG_PATH="\$HOME/Documents/VeilleScientifique/logs/launch.log"
+LOG_PATH="\$HOME/Documents/ScienceTorch/logs/launch.log"
 
 echo -e "${CYAN}${BOLD}"
 echo "╔══════════════════════════════════════════════════════╗"
-echo "║    🔬  Build — Veille Scientifique macOS App        ║"
+echo "║    🔬  Build — Science Torch macOS App        ║"
 echo "╚══════════════════════════════════════════════════════╝"
 echo -e "${RESET}"
 
@@ -89,7 +89,7 @@ echo "║          ✅  Build terminé !                        ║"
 echo "╚══════════════════════════════════════════════════════╝"
 echo -e "${RESET}"
 echo -e "  ${BOLD}Lanceur créé sur votre bureau :${RESET}"
-echo -e "  ${CYAN}~/Desktop/Veille Scientifique.app${RESET}"
+echo -e "  ${CYAN}~/Desktop/Science Torch.app${RESET}"
 echo -e "  Double-cliquez pour lancer — aucun terminal requis."
 echo ""
 echo -e "  ${BOLD}Pour partager :${RESET}"

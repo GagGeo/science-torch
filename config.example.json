@@ -2,13 +2,13 @@
   "version": "1.0.0",
   "language": "en",
   "paths": {
-    "base": "/Users/VOTRE_NOM/Documents/VeilleScientifique",
-    "pdfs": "/Users/VOTRE_NOM/Documents/VeilleScientifique/pdfs",
-    "pdfs_auto": "/Users/VOTRE_NOM/Documents/VeilleScientifique/pdfs/auto",
-    "pdfs_manual": "/Users/VOTRE_NOM/Documents/VeilleScientifique/pdfs/manual",
-    "summaries": "/Users/VOTRE_NOM/Documents/VeilleScientifique/resumes",
-    "excel": "/Users/VOTRE_NOM/Documents/VeilleScientifique/veille.xlsx",
-    "logs": "/Users/VOTRE_NOM/Documents/VeilleScientifique/logs"
+    "base": "/Users/VOTRE_NOM/Documents/ScienceTorch",
+    "pdfs": "/Users/VOTRE_NOM/Documents/ScienceTorch/pdfs",
+    "pdfs_auto": "/Users/VOTRE_NOM/Documents/ScienceTorch/pdfs/auto",
+    "pdfs_manual": "/Users/VOTRE_NOM/Documents/ScienceTorch/pdfs/manual",
+    "summaries": "/Users/VOTRE_NOM/Documents/ScienceTorch/resumes",
+    "excel": "/Users/VOTRE_NOM/Documents/ScienceTorch/veille.xlsx",
+    "logs": "/Users/VOTRE_NOM/Documents/ScienceTorch/logs"
   },
   "domains": [
     {

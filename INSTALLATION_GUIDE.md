@@ -1,8 +1,8 @@
-# 🔬 Science Watch — Installation Guide
+# 🔬 Science Torch — Installation Guide
 
 ## What this app does
 
-Science Watch is an automated scientific literature monitoring tool. Every week, it:
+Science Torch is an automated scientific literature monitoring tool. Every week, it:
 - Automatically searches **PubMed** for new articles matching your research domains
 - Analyzes and summarizes each article using a **local LLM** (Ollama — free, private, no data sent online)
 - Updates a structured **Excel file** with all key information
@@ -66,13 +66,13 @@ The wizard will ask you a few questions:
 ```
 bash build.sh
 ```
-This creates **Science Watch.app** directly on your desktop.
+This creates **Science Torch.app** directly on your desktop.
 
 ---
 
 ## Launching
 
-Double-click **Science Watch.app** on your desktop.
+Double-click **Science Torch.app** on your desktop.
 
 > ⚠️ If macOS shows "unidentified developer" on first launch:
 > **Right-click → Open → Open anyway**

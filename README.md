@@ -1,4 +1,4 @@
-# 🔬 Science Watch — Automated Scientific Literature Monitor
+# 🔬 Science Torch — Automated Scientific Literature Monitor
 
 *[Français ci-dessous](#français)*
 
@@ -6,7 +6,7 @@
 
 ## English
 
-**Science Watch** is a free, privacy-first tool for researchers who want to stay up to date with scientific literature — without spending hours on PubMed every week.
+**Science Torch** is a free, privacy-first tool for researchers who want to stay up to date with scientific literature — without spending hours on PubMed every week.
 
 ### Features
 
@@ -41,7 +41,7 @@
 git clone https://github.com/GagGeo/science-torch.git
 cd science-torch
 bash install.sh   # installs dependencies + runs configuration wizard
-bash build.sh     # creates Science Watch.app on your desktop
+bash build.sh     # creates Science Torch.app on your desktop
 ```
 
 See [INSTALLATION_GUIDE.md](INSTALLATION_GUIDE.md) for detailed instructions.
@@ -63,7 +63,7 @@ MIT — free to use, modify and distribute.
 
 ## Français
 
-**Science Watch** est un outil gratuit et respectueux de la vie privée pour les chercheurs qui souhaitent assurer leur veille bibliographique sans passer des heures sur PubMed chaque semaine.
+**Science Torch** est un outil gratuit et respectueux de la vie privée pour les chercheurs qui souhaitent assurer leur veille bibliographique sans passer des heures sur PubMed chaque semaine.
 
 ### Fonctionnalités
 

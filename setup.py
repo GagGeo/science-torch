@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-setup.py — Configuration initiale interactive de Veille Scientifique
+setup.py — Configuration initiale interactive de Science Torch
 Lance ce script une seule fois pour configurer l'application.
 """
 
@@ -22,7 +22,7 @@ RESET = "\033[0m"
 def print_header():
     print(f"""
 {CYAN}{BOLD}╔══════════════════════════════════════════════════════╗
-║        🔬  Veille Scientifique — Configuration       ║
+║        🔬  Science Torch — Configuration       ║
 ╚══════════════════════════════════════════════════════╝{RESET}
     """)
 

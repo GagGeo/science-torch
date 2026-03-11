@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-main.py — Point d'entrée de Veille Scientifique
+main.py — Point d'entrée de Science Torch
 """
 
 import json
@@ -56,12 +56,12 @@ def main():
     add_file_handler(log_dir)
 
     logger = get_logger(__name__)
-    logger.info("Démarrage Veille Scientifique")
+    logger.info("Démarrage Science Torch")
 
     try:
         from ui.menu_bar import VeilleApp
         app = VeilleApp(config)
-        print("🔬 Veille Scientifique démarrée — icône dans la barre de menu")
+        print("🔬 Science Torch démarrée — icône dans la barre de menu")
         app.run_app()
 
     except ImportError as e:
