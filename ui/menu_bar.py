@@ -38,7 +38,7 @@ class VeilleApp(rumps.App if HAS_RUMPS else object):
             raise ImportError("rumps non installé. Lancez : pip install rumps")
 
         super().__init__(
-            name="Veille Scientifique",
+            name="Science Torch",
             title="🔬",
             quit_button="Quitter"
         )
@@ -83,7 +83,7 @@ class VeilleApp(rumps.App if HAS_RUMPS else object):
         """Lance la recherche PubMed immédiatement en arrière-plan."""
         self.title = "⏳"
         rumps.notification(
-            title="Veille Scientifique",
+            title="Science Torch",
             subtitle="Recherche en cours…",
             message="PubMed est interrogé pour vos domaines."
         )
@@ -99,7 +99,7 @@ class VeilleApp(rumps.App if HAS_RUMPS else object):
             logger.error(f"Erreur recherche : {e}")
             self.title = "🔬"
             rumps.notification(
-                title="Veille Scientifique",
+                title="Science Torch",
                 subtitle="Erreur",
                 message=f"La recherche a échoué : {str(e)[:80]}"
             )
@@ -110,7 +110,7 @@ class VeilleApp(rumps.App if HAS_RUMPS else object):
         msg = f"{n} nouvel(s) article(s) ajouté(s)." if n > 0 else "Aucun nouvel article cette semaine."
         if self.config.get("scheduler", {}).get("notifications", True):
             rumps.notification(
-                title="Veille Scientifique — Recherche terminée",
+                title="Science Torch — Recherche terminée",
                 subtitle=result.get("week", ""),
                 message=msg
             )
@@ -145,7 +145,7 @@ class VeilleApp(rumps.App if HAS_RUMPS else object):
         """Traite un PDF importé manuellement."""
         self.title = "⏳"
         rumps.notification(
-            title="Veille Scientifique",
+            title="Science Torch",
             subtitle="Traitement du PDF…",
             message=Path(pdf_path).name
         )
@@ -180,7 +180,7 @@ class VeilleApp(rumps.App if HAS_RUMPS else object):
                 self.title = "🔬"
                 msg = "Article ajouté avec succès !" if added else "Article déjà présent dans la base."
                 rumps.notification(
-                    title="Veille Scientifique",
+                    title="Science Torch",
                     subtitle="PDF importé",
                     message=msg
                 )
@@ -201,7 +201,7 @@ class VeilleApp(rumps.App if HAS_RUMPS else object):
                 "Titre de l'article (vérifier/corriger) :" & return & return & ¬
                 "Le PDF a été importé mais certaines métadonnées sont manquantes." ¬
                 default answer "{current_title}" ¬
-                with title "Veille Scientifique — Métadonnées" ¬
+                with title "Science Torch — Métadonnées" ¬
                 buttons {{"Annuler", "Confirmer"}} ¬
                 default button "Confirmer"
             return text returned of dialogResult
@@ -224,7 +224,7 @@ class VeilleApp(rumps.App if HAS_RUMPS else object):
             subprocess.run(["open", str(self.excel_path)])
         else:
             rumps.notification(
-                title="Veille Scientifique",
+                title="Science Torch",
                 subtitle="Fichier introuvable",
                 message="Lancez d'abord une recherche pour créer le fichier Excel."
             )
@@ -237,7 +237,7 @@ class VeilleApp(rumps.App if HAS_RUMPS else object):
             subprocess.run(["open", str(summary)])
         else:
             rumps.notification(
-                title="Veille Scientifique",
+                title="Science Torch",
                 subtitle="Aucun résumé",
                 message="Lancez une recherche pour générer le premier résumé."
             )
@@ -261,7 +261,7 @@ class VeilleApp(rumps.App if HAS_RUMPS else object):
             subprocess.run(["open", str(config_path)])
         else:
             rumps.notification(
-                title="Veille Scientifique",
+                title="Science Torch",
                 subtitle="Config introuvable",
                 message="Lancez setup.py pour configurer l'application."
             )
@@ -270,7 +270,7 @@ class VeilleApp(rumps.App if HAS_RUMPS else object):
         """Affiche une notification d'erreur."""
         self.title = "🔬"
         rumps.notification(
-            title="Veille Scientifique — Erreur",
+            title="Science Torch — Erreur",
             subtitle="Une erreur est survenue",
             message=message
         )

@@ -14,11 +14,11 @@ _lang = "en"
 
 STRINGS = {
     # Setup wizard
-    "app_name":            {"fr": "Veille Scientifique", "en": "Science Watch"},
-    "config_title":        {"fr": "Veille Scientifique — Configuration", "en": "Science Watch — Configuration"},
+    "app_name":            {"fr": "Science Torch", "en": "Science Torch"},
+    "config_title":        {"fr": "Science Torch — Configuration", "en": "Science Torch — Configuration"},
     "step":                {"fr": "Étape", "en": "Step"},
     "welcome":             {"fr": "Bienvenue ! Ce script va configurer votre outil de veille scientifique.",
-                            "en": "Welcome! This script will configure your Science Watch tool."},
+                            "en": "Welcome! This script will configure your Science Torch tool."},
     "edit_later":          {"fr": "Vous pourrez modifier ces paramètres à tout moment dans config.json",
                             "en": "You can modify these settings at any time in config.json"},
     "check_prereqs":       {"fr": "Vérification des prérequis", "en": "Checking prerequisites"},
@@ -112,7 +112,7 @@ def load_language_from_config():
     """Charge la langue depuis config.json."""
     try:
         config_paths = [
-            Path.home() / "Documents" / "VeilleScientifique" / "config.json",
+            Path.home() / "Documents" / "ScienceTorch" / "config.json",
             Path(__file__).parent.parent / "config.json",
         ]
         for p in config_paths:

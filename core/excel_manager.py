@@ -167,7 +167,7 @@ class ExcelManager:
         # Ligne de titre (fusionnée)
         ws.merge_cells(f"A1:{get_column_letter(len(columns))}1")
         title_cell = ws["A1"]
-        title_cell.value = f"🔬 Veille Scientifique — {title}"
+        title_cell.value = f"🔬 Science Torch — {title}"
         title_cell.font  = Font(
             bold=True, size=13, color=COLORS["header_fg"],
             name="Calibri"
