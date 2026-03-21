@@ -197,3 +197,21 @@ class ZoteroClient:
         except Exception as e:
             logger.debug(f"Better BibTeX clé non récupérée : {e}")
         return None
+
+    def add_article_silent(self, article: dict) -> Optional[str]:
+        """
+        Ajoute un article dans Zotero en mode silencieux.
+        - N'ouvre PAS l'UI Zotero
+        - Timeout court (2s max) — si Zotero n'est pas dispo, on passe
+        - Aucun popup, aucune fenêtre
+        """
+        if not self.enabled:
+            return None
+        if not self._is_available():
+            logger.debug("Zotero non disponible — ignoré silencieusement")
+            return None
+        try:
+            return self.add_article(article)
+        except Exception as e:
+            logger.debug(f"Zotero silent — ignoré : {e}")
+            return None

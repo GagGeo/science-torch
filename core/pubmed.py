@@ -1,6 +1,7 @@
 """
 core/pubmed.py — Moteur de recherche PubMed
-Recherche automatique, récupération des métadonnées, téléchargement PDFs open access.
+Recherche automatique, récupération des métadonnées.
+Le téléchargement PDF est délégué à pdf_sources.py (5 sources).
 """
 import sys as _sys
 import os as _os
@@ -14,6 +15,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Optional
 from utils.logger import get_logger
+from core.pdf_sources import PDFSourceManager
 
 logger = get_logger(__name__)
 
@@ -28,6 +30,7 @@ class PubMedClient:
     def __init__(self, config: dict):
         self.email       = config["pubmed"].get("email", "")
         self.max_results = config["pubmed"].get("max_results", 50)
+        self.pdf_sources = PDFSourceManager(config)
         self.pdfs_auto   = Path(config["paths"]["pdfs_auto"])
         self.session     = requests.Session()
         self.session.headers.update({"User-Agent": "VeilleScientifique/1.0"})
@@ -376,6 +379,6 @@ class PubMedClient:
         articles = self.fetch_details(pmids)
 
         for art in articles:
-            self.try_download_pdf(art)
+            self.pdf_sources.try_download_pdf(art)
 
         return articles

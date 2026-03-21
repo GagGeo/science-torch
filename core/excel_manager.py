@@ -453,3 +453,77 @@ class ExcelManager:
                 stats["pdf_available"] += 1
 
         return stats
+
+    def update_article_analysis(self, article: dict) -> bool:
+        """
+        Met à jour les colonnes d'analyse Ollama d'un article déjà dans Excel.
+        Cherche l'article par PMID dans tous les onglets et met à jour ses colonnes.
+        """
+        if self.wb is None:
+            self.load_or_create()
+
+        pmid     = article.get("pmid", "")
+        analysis = article.get("analysis", {})
+        if not pmid or not analysis:
+            return False
+
+        s        = self._safe_str
+        art_type = article.get("article_type", "experimental")
+        updated  = False
+
+        # Colonnes à mettre à jour selon le type
+        if art_type == "experimental":
+            updates = {
+                "Hypothèse(s)":         s(analysis.get("hypotheses", "")),
+                "Population":           s(analysis.get("population", "")),
+                "N par groupe":         s(analysis.get("n_per_group", "")),
+                "Type de groupe":       s(analysis.get("group_type", "")),
+                "Critères incl./excl.": s(analysis.get("inclusion_criteria", "")),
+                "Méthode / Outils":     s(analysis.get("methods", "")),
+                "Résultats principaux": s(analysis.get("results", "")),
+                "Taille d'effet":       s(analysis.get("effect_size", "")),
+                "Conclusion":           s(analysis.get("conclusion", "")),
+                "Take Home Message":    s(analysis.get("take_home_message", "")),
+            }
+        else:
+            updates = {
+                "Objectif de la revue":  s(analysis.get("review_objective", "")),
+                "Corpus couvert":        s(analysis.get("corpus", "")),
+                "Nb articles inclus":    s(analysis.get("n_articles", "")),
+                "Période couverte":      s(analysis.get("period_covered", "")),
+                "Thèmes principaux":     s(analysis.get("main_themes", "")),
+                "Consensus identifiés":  s(analysis.get("consensus", "")),
+                "Débats / Controverses": s(analysis.get("debates", "")),
+                "Limites identifiées":   s(analysis.get("limitations", "")),
+                "Taille d'effet globale":s(analysis.get("global_effect_size", "")),
+                "Hétérogénéité I²":     s(analysis.get("heterogeneity", "")),
+                "Take Home Message":     s(analysis.get("take_home_message", "")),
+            }
+
+        # Mettre à jour dans chaque onglet
+        for sheet_name in self.wb.sheetnames:
+            ws = self.wb[sheet_name]
+            # Trouver la ligne avec ce PMID
+            pmid_col = None
+            headers  = {}
+            for cell in ws[2]:  # Ligne 2 = en-têtes
+                if cell.value:
+                    headers[cell.value] = cell.column
+            pmid_col = headers.get("PMID")
+            if not pmid_col:
+                continue
+
+            for row in ws.iter_rows(min_row=3):
+                if str(row[pmid_col - 1].value) == str(pmid):
+                    for col_name, value in updates.items():
+                        col_idx = headers.get(col_name)
+                        if col_idx:
+                            ws.cell(row=row[0].row, column=col_idx, value=value)
+                    updated = True
+                    break
+
+        if updated:
+            self.save()
+            logger.debug(f"Analyse mise à jour pour PMID {pmid}")
+
+        return updated

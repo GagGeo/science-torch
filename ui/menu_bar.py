@@ -6,11 +6,9 @@ import sys as _sys
 import os as _os
 _sys.path.insert(0, _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
 
-
 import os
 import subprocess
 import threading
-from datetime import datetime
 from pathlib import Path
 
 try:
@@ -31,7 +29,7 @@ logger = get_logger(__name__)
 
 
 class VeilleApp(rumps.App if HAS_RUMPS else object):
-    """Application barre de menu macOS pour la veille scientifique."""
+    """Application barre de menu macOS pour Science Torch."""
 
     def __init__(self, config: dict):
         if not HAS_RUMPS:
@@ -40,89 +38,101 @@ class VeilleApp(rumps.App if HAS_RUMPS else object):
         super().__init__(
             name="Science Torch",
             title="🔬",
-            quit_button="Quitter"
+            quit_button="Quit"
         )
 
         self.config    = config
-        self.scheduler = WeeklyScheduler(config, on_complete=self._on_search_complete)
+        self.scheduler = WeeklyScheduler(
+            config,
+            on_complete=self._on_analysis_complete,
+            on_phase1_complete=self._on_phase1_complete
+        )
         self.pdf_mgr   = PDFManager(config)
         self.pubmed    = PubMedClient(config)
         self.ollama    = OllamaClient(config)
         self.excel     = ExcelManager(config)
         self.zotero    = ZoteroClient(config)
-
         self.excel_path = Path(config["paths"]["excel"])
         self._build_menu()
 
     def _build_menu(self):
-        """Construit le menu de la barre de statut."""
         self.menu = [
-            rumps.MenuItem("🔍 Lancer une recherche maintenant",
-                           callback=self.run_search_now),
-            rumps.MenuItem("📥 Ajouter un PDF manuellement",
-                           callback=self.open_pdf_picker),
-            None,  # Séparateur
-            rumps.MenuItem("📊 Ouvrir le fichier Excel",
-                           callback=self.open_excel),
-            rumps.MenuItem("📋 Voir le dernier résumé",
-                           callback=self.open_last_summary),
+            rumps.MenuItem("🔍 Run a search now",        callback=self.run_search_now),
+            rumps.MenuItem("📥 Add a PDF manually",      callback=self.open_pdf_picker),
             None,
-            rumps.MenuItem("📚 Ouvrir Zotero",
-                           callback=self.open_zotero),
+            rumps.MenuItem("📊 Open Excel file",         callback=self.open_excel),
+            rumps.MenuItem("📋 View last summary",        callback=self.open_last_summary),
             None,
-            rumps.MenuItem("⚙️  Paramètres",
-                           callback=self.open_settings),
-            rumps.MenuItem("📁 Ouvrir le dossier PDFs",
-                           callback=self.open_pdfs_folder),
+            rumps.MenuItem("📚 Open Zotero",             callback=self.open_zotero),
+            None,
+            rumps.MenuItem("⚙️  Settings",               callback=self.open_settings),
+            rumps.MenuItem("📁 Open PDFs folder",        callback=self.open_pdfs_folder),
         ]
 
     # ── Actions du menu ───────────────────────────────────────────────────────
 
-    @rumps.clicked("🔍 Lancer une recherche maintenant")
+    @rumps.clicked("🔍 Run a search now")
     def run_search_now(self, _):
         """Lance la recherche PubMed immédiatement en arrière-plan."""
         self.title = "⏳"
         rumps.notification(
             title="Science Torch",
-            subtitle="Recherche en cours…",
-            message="PubMed est interrogé pour vos domaines."
+            subtitle="Search in progress…",
+            message="PubMed is being searched for your domains."
         )
         thread = threading.Thread(target=self._search_worker, daemon=True)
         thread.start()
 
     def _search_worker(self):
-        """Worker thread pour la recherche (ne bloque pas l'UI)."""
+        """Worker thread pour la Phase 1 (ne bloque pas l'UI)."""
         try:
-            result = self.scheduler.run_weekly_search()
-            self.title = "🔬"
+            self.scheduler.run_weekly_search()
         except Exception as e:
             logger.error(f"Erreur recherche : {e}")
             self.title = "🔬"
             rumps.notification(
                 title="Science Torch",
-                subtitle="Erreur",
-                message=f"La recherche a échoué : {str(e)[:80]}"
+                subtitle="Error",
+                message=f"Search failed: {str(e)[:80]}"
             )
 
-    def _on_search_complete(self, result: dict):
-        """Callback appelé quand la recherche se termine."""
-        n   = result.get("new_articles", 0)
-        msg = f"{n} nouvel(s) article(s) ajouté(s)." if n > 0 else "Aucun nouvel article cette semaine."
+    def _on_phase1_complete(self, result: dict):
+        """Notification après Phase 1 — articles dans Excel, analyse en cours."""
+        self.title = "🔬"
+        n = result.get("new_articles", 0)
+        if n > 0:
+            rumps.notification(
+                title="Science Torch — Articles found",
+                subtitle=f"{n} new article(s) added to Excel",
+                message="Analysis running in background… 🔄"
+            )
+        else:
+            rumps.notification(
+                title="Science Torch",
+                subtitle="Search complete",
+                message="No new articles this week."
+            )
+
+    def _on_analysis_complete(self, result: dict):
+        """Notification après Phase 2 — analyse Ollama terminée."""
+        n = result.get("total_analyzed", 0)
         if self.config.get("scheduler", {}).get("notifications", True):
             rumps.notification(
-                title="Science Torch — Recherche terminée",
-                subtitle=result.get("week", ""),
-                message=msg
+                title="Science Torch — Analysis complete",
+                subtitle=f"{n} article(s) fully analyzed",
+                message="Excel updated. Summary generated. ✅"
             )
 
-    @rumps.clicked("📥 Ajouter un PDF manuellement")
+    # ── Import PDF ────────────────────────────────────────────────────────────
+
+    @rumps.clicked("📥 Add a PDF manually")
     def open_pdf_picker(self, _):
         """Ouvre un sélecteur de fichier macOS pour choisir un PDF."""
         script = """
         tell application "Finder"
             activate
         end tell
-        set theFile to choose file with prompt "Sélectionnez un article PDF" \\
+        set theFile to choose file with prompt "Select a PDF article" \\
             of type {"pdf"} \\
             with invisibles false
         return POSIX path of theFile
@@ -146,42 +156,36 @@ class VeilleApp(rumps.App if HAS_RUMPS else object):
         self.title = "⏳"
         rumps.notification(
             title="Science Torch",
-            subtitle="Traitement du PDF…",
+            subtitle="Processing PDF…",
             message=Path(pdf_path).name
         )
 
         def worker():
             try:
-                # Extraction métadonnées du PDF
                 metadata = self.pdf_mgr.import_pdf(pdf_path)
                 if not metadata:
-                    self._notify_error("PDF invalide ou non lisible")
+                    self._notify_error("Invalid or unreadable PDF")
                     return
 
-                # Enrichissement depuis PubMed si DOI/PMID trouvé
                 metadata = self.pdf_mgr.enrich_from_pubmed(metadata, self.pubmed)
 
-                # Analyse Ollama
                 domains = self.config.get("domains", [])
                 if metadata.get("abstract"):
                     metadata = self.ollama.analyze_article(metadata, domains)
                 else:
-                    # Demander à l'utilisateur via une fenêtre de dialogue
                     self._ask_manual_metadata(metadata)
 
-                # Ajout Excel
                 self.excel.load_or_create()
                 added = self.excel.add_article(metadata)
 
-                # Zotero
                 if added:
-                    self.zotero.add_article(metadata)
+                    self.zotero.add_article_silent(metadata)
 
                 self.title = "🔬"
-                msg = "Article ajouté avec succès !" if added else "Article déjà présent dans la base."
+                msg = "Article added successfully!" if added else "Article already in database."
                 rumps.notification(
                     title="Science Torch",
-                    subtitle="PDF importé",
+                    subtitle="PDF imported",
                     message=msg
                 )
             except Exception as e:
@@ -198,12 +202,12 @@ class VeilleApp(rumps.App if HAS_RUMPS else object):
         script = f"""
         tell application "System Events"
             set dialogResult to display dialog ¬
-                "Titre de l'article (vérifier/corriger) :" & return & return & ¬
-                "Le PDF a été importé mais certaines métadonnées sont manquantes." ¬
+                "Article title (check/correct):" & return & return & ¬
+                "PDF imported but some metadata is missing." ¬
                 default answer "{current_title}" ¬
-                with title "Science Torch — Métadonnées" ¬
-                buttons {{"Annuler", "Confirmer"}} ¬
-                default button "Confirmer"
+                with title "Science Torch — Metadata" ¬
+                buttons {{"Cancel", "Confirm"}} ¬
+                default button "Confirm"
             return text returned of dialogResult
         end tell
         """
@@ -217,67 +221,66 @@ class VeilleApp(rumps.App if HAS_RUMPS else object):
         except Exception:
             pass
 
-    @rumps.clicked("📊 Ouvrir le fichier Excel")
+    # ── Ouvertures ────────────────────────────────────────────────────────────
+
+    @rumps.clicked("📊 Open Excel file")
     def open_excel(self, _):
-        """Ouvre le fichier Excel dans l'application par défaut."""
         if self.excel_path.exists():
             subprocess.run(["open", str(self.excel_path)])
         else:
             rumps.notification(
                 title="Science Torch",
-                subtitle="Fichier introuvable",
-                message="Lancez d'abord une recherche pour créer le fichier Excel."
+                subtitle="File not found",
+                message="Run a search first to create the Excel file."
             )
 
-    @rumps.clicked("📋 Voir le dernier résumé")
+    @rumps.clicked("📋 View last summary")
     def open_last_summary(self, _):
-        """Ouvre le dernier résumé hebdomadaire."""
         summary = self.scheduler.get_last_summary_path()
         if summary and summary.exists():
             subprocess.run(["open", str(summary)])
         else:
             rumps.notification(
                 title="Science Torch",
-                subtitle="Aucun résumé",
-                message="Lancez une recherche pour générer le premier résumé."
+                subtitle="No summary",
+                message="Run a search to generate the first summary."
             )
 
-    @rumps.clicked("📚 Ouvrir Zotero")
+    @rumps.clicked("📚 Open Zotero")
     def open_zotero(self, _):
-        """Ouvre Zotero."""
         subprocess.run(["open", "-a", "Zotero"])
 
-    @rumps.clicked("📁 Ouvrir le dossier PDFs")
+    @rumps.clicked("📁 Open PDFs folder")
     def open_pdfs_folder(self, _):
-        """Ouvre le dossier des PDFs dans le Finder."""
         pdfs_path = Path(self.config["paths"]["pdfs"])
         subprocess.run(["open", str(pdfs_path)])
 
-    @rumps.clicked("⚙️  Paramètres")
+    @rumps.clicked("⚙️  Settings")
     def open_settings(self, _):
-        """Ouvre le fichier de configuration dans l'éditeur par défaut."""
-        config_path = Path(__file__).parent.parent / "config.json"
-        if config_path.exists():
-            subprocess.run(["open", str(config_path)])
-        else:
-            rumps.notification(
-                title="Science Torch",
-                subtitle="Config introuvable",
-                message="Lancez setup.py pour configurer l'application."
-            )
+        config_paths = [
+            Path.home() / "Documents" / "ScienceTorch" / "config.json",
+            Path(__file__).parent.parent / "config.json",
+        ]
+        for p in config_paths:
+            if p.exists():
+                subprocess.run(["open", str(p)])
+                return
+        rumps.notification(
+            title="Science Torch",
+            subtitle="Config not found",
+            message="Run setup.py to configure the app."
+        )
 
     def _notify_error(self, message: str):
-        """Affiche une notification d'erreur."""
         self.title = "🔬"
         rumps.notification(
-            title="Science Torch — Erreur",
-            subtitle="Une erreur est survenue",
+            title="Science Torch — Error",
+            subtitle="An error occurred",
             message=message
         )
 
     # ── Démarrage ──────────────────────────────────────────────────────────────
     def run_app(self):
-        """Démarre l'application et le scheduler."""
         self.scheduler.start()
         logger.info("Application démarrée dans la barre de menu")
         self.run()
