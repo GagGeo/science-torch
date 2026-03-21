@@ -53,10 +53,12 @@ class VeilleApp(rumps.App if HAS_RUMPS else object):
         self.excel     = ExcelManager(config)
         self.zotero    = ZoteroClient(config)
         self.excel_path = Path(config["paths"]["excel"])
+        self._web_ui_thread = None
         self._build_menu()
 
     def _build_menu(self):
         self.menu = [
+            rumps.MenuItem("🌐 Open dashboard",          callback=self.open_dashboard),
             rumps.MenuItem("🔍 Run a search now",        callback=self.run_search_now),
             rumps.MenuItem("📥 Add a PDF manually",      callback=self.open_pdf_picker),
             None,
@@ -70,6 +72,28 @@ class VeilleApp(rumps.App if HAS_RUMPS else object):
         ]
 
     # ── Actions du menu ───────────────────────────────────────────────────────
+
+    @rumps.clicked("🌐 Open dashboard")
+    def open_dashboard(self, _):
+        """Ouvre l'interface web dans le navigateur."""
+        import threading, webbrowser, time
+        config_path = (
+            Path.home() / "Documents" / "ScienceTorch" / "config.json"
+            if (Path.home() / "Documents" / "ScienceTorch" / "config.json").exists()
+            else Path(__file__).parent.parent / "config.json"
+        )
+        if self._web_ui_thread and self._web_ui_thread.is_alive():
+            webbrowser.open(f"http://localhost:7432")
+            return
+        def run_ui():
+            try:
+                from ui.web_ui import WebUI
+                ui = WebUI(self.config, config_path)
+                ui.run(open_browser=True)
+            except Exception as e:
+                logger.error(f"Web UI error: {e}")
+        self._web_ui_thread = threading.Thread(target=run_ui, daemon=True)
+        self._web_ui_thread.start()
 
     @rumps.clicked("🔍 Run a search now")
     def run_search_now(self, _):

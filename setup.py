@@ -19,6 +19,62 @@ YELLOW= "\033[93m"
 RED   = "\033[91m"
 RESET = "\033[0m"
 
+
+# ── Langue globale ────────────────────────────────────────────────────────────
+LANG = "en"  # Défaut anglais — mis à jour par configure_language()
+
+# Chaînes bilingues pour le setup
+T = {
+    "welcome":       {"fr": "Bienvenue ! Ce script va configurer votre outil de veille scientifique.",
+                      "en": "Welcome! This script will configure your Science Torch tool."},
+    "edit_later":    {"fr": "Vous pourrez modifier ces paramètres à tout moment dans config.json",
+                      "en": "You can modify these settings at any time in config.json"},
+    "step":          {"fr": "Étape", "en": "Step"},
+    "prereqs":       {"fr": "Vérification des prérequis", "en": "Checking prerequisites"},
+    "detected":      {"fr": "détecté", "en": "detected"},
+    "not_found":     {"fr": "non trouvé — ", "en": "not found — "},
+    "continue_anyway":{"fr": "Certains prérequis manquent — continuez quand même ?",
+                       "en": "Some prerequisites are missing — continue anyway?"},
+    "continue_q":    {"fr": "Continuer malgré tout?", "en": "Continue anyway?"},
+    "storage":       {"fr": "Dossiers de stockage", "en": "Storage folders"},
+    "domains_title": {"fr": "Domaines de recherche et mots-clés PubMed",
+                      "en": "Research domains and PubMed keywords"},
+    "combos_title":  {"fr": "Onglets de combinaisons inter-domaines",
+                      "en": "Cross-domain combination tabs"},
+    "ollama_title":  {"fr": "Modèle Ollama (LLM local)", "en": "Ollama model (local LLM)"},
+    "zotero_title":  {"fr": "Intégration Zotero (optionnelle)", "en": "Zotero integration (optional)"},
+    "scheduler_title":{"fr": "Planification de la recherche automatique",
+                       "en": "Automatic search scheduling"},
+    "pubmed_title":  {"fr": "Configuration PubMed", "en": "PubMed configuration"},
+    "excel_title":   {"fr": "Champs du fichier Excel", "en": "Excel file fields"},
+    "install_title": {"fr": "Installation des dépendances Python",
+                      "en": "Installing Python dependencies"},
+    "yes_no":        {"fr": "[O/n]", "en": "[Y/n]"},
+    "no_yes":        {"fr": "[o/N]", "en": "[y/N]"},
+    "saved":         {"fr": "Configuration sauvegardée dans", "en": "Configuration saved to"},
+    "done":          {"fr": "Configuration terminée !", "en": "Configuration complete!"},
+    "launch":        {"fr": "Pour lancer l'application :", "en": "To launch the app:"},
+    "icon_appears":  {"fr": "L'icône 🔬 apparaîtra dans votre barre de menu.",
+                      "en": "The 🔬 icon will appear in your menu bar."},
+}
+
+def t(key: str) -> str:
+    """Retourne la chaîne traduite selon la langue courante."""
+    return T.get(key, {}).get(LANG, T.get(key, {}).get("en", key))
+
+# ── Étape 0 bis : Choix de la langue ─────────────────────────────────────────
+def configure_language() -> str:
+    """Première question : choix de la langue."""
+    global LANG
+    print(f"\n{CYAN}{BOLD}── Language / Langue ──{RESET}")
+    print("  Choose your language / Choisissez votre langue :")
+    print("  1. English")
+    print("  2. Français")
+    choice = input(f"{YELLOW}▶ [1/2] (default: 1): {RESET}").strip()
+    LANG = "fr" if choice == "2" else "en"
+    print(f"  {GREEN}✓ Language set to: {'Français' if LANG == 'fr' else 'English'}{RESET}")
+    return LANG
+
 def print_header():
     print(f"""
 {CYAN}{BOLD}╔══════════════════════════════════════════════════════╗
@@ -27,7 +83,8 @@ def print_header():
     """)
 
 def print_step(n, title):
-    print(f"\n{CYAN}{BOLD}── Étape {n} : {title} ──{RESET}")
+    step_word = t("step")
+    print(f"\n{CYAN}{BOLD}── {step_word} {n} : {title} ──{RESET}")
 
 def ask(prompt, default=None):
     suffix = f" [{default}]" if default else ""
@@ -35,7 +92,7 @@ def ask(prompt, default=None):
     return val if val else default
 
 def ask_bool(prompt, default=True):
-    suffix = "[O/n]" if default else "[o/N]"
+    suffix = t("yes_no") if default else t("no_yes")
     val = input(f"{YELLOW}▶ {prompt} {suffix}: {RESET}").strip().lower()
     if not val:
         return default
@@ -74,26 +131,61 @@ def check_dependencies():
 
 # ── Étape 1 : Dossiers ──────────────────────────────────────────────────────
 def configure_paths():
-    print_step(1, "Dossiers de stockage")
+    print_step(1, t("storage"))
     home = Path.home()
-    default_base = str(home / "Documents" / "VeilleScientifique")
-    base = ask("Dossier racine du projet", default_base)
-    base = Path(base).expanduser()
+
+    # ── Nom du dossier ────────────────────────────────────────────────────
+    if LANG == "fr":
+        print("""
+  Choisissez le nom et l'emplacement du dossier où seront stockés
+  vos articles, PDFs et résumés.
+        """)
+        default_name = "ScienceTorch"
+        name_prompt  = "Nom du dossier de données"
+        loc_prompt   = "Dossier parent (où créer le dossier de données)"
+        default_loc  = str(home / "Documents")
+    else:
+        print("""
+  Choose the name and location of the folder where your articles,
+  PDFs and summaries will be stored.
+        """)
+        default_name = "ScienceTorch"
+        name_prompt  = "Data folder name"
+        loc_prompt   = "Parent folder (where to create the data folder)"
+        default_loc  = str(home / "Documents")
+
+    folder_name = ask(name_prompt, default_name).strip() or default_name
+    parent_loc  = ask(loc_prompt, default_loc).strip() or default_loc
+    base        = Path(parent_loc).expanduser() / folder_name
+
+    # Nom du fichier Excel
+    if LANG == "fr":
+        excel_name = ask("Nom du fichier Excel", "veille.xlsx").strip() or "veille.xlsx"
+        summaries_name = "resumes"
+    else:
+        excel_name     = ask("Excel file name", "watch.xlsx").strip() or "watch.xlsx"
+        summaries_name = "summaries"
+
+    if not excel_name.endswith(".xlsx"):
+        excel_name += ".xlsx"
 
     paths = {
         "base":         str(base),
         "pdfs":         str(base / "pdfs"),
         "pdfs_auto":    str(base / "pdfs" / "auto"),
         "pdfs_manual":  str(base / "pdfs" / "manual"),
-        "summaries":    str(base / "resumes"),
-        "excel":        str(base / "veille.xlsx"),
+        "summaries":    str(base / summaries_name),
+        "excel":        str(base / excel_name),
         "logs":         str(base / "logs"),
     }
 
     for p in paths.values():
         Path(p).mkdir(parents=True, exist_ok=True)
 
-    print(f"  {GREEN}✓ Dossiers créés dans {base}{RESET}")
+    if LANG == "fr":
+        print(f"  {GREEN}✓ Dossiers créés dans {base}{RESET}")
+    else:
+        print(f"  {GREEN}✓ Folders created in {base}{RESET}")
     return paths
 
 # ── Étape 2 : Domaines et mots-clés ─────────────────────────────────────────
@@ -256,6 +348,130 @@ def configure_pubmed():
         "base_url":    "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/"
     }
 
+
+# ── Configuration des champs Excel ───────────────────────────────────────────
+DEFAULT_COLS_EXPERIMENTAL = [
+    {"name": "Référence",              "width": 40},
+    {"name": "Année",                  "width": 8},
+    {"name": "Clé citable",            "width": 15},
+    {"name": "BibTeX",                 "width": 30},
+    {"name": "Type",                   "width": 20},
+    {"name": "Hypothèse(s)",           "width": 40},
+    {"name": "Population",             "width": 25},
+    {"name": "N par groupe",           "width": 15},
+    {"name": "Type de groupe",         "width": 25},
+    {"name": "Critères incl./excl.",   "width": 35},
+    {"name": "Méthode / Outils",       "width": 35},
+    {"name": "Résultats principaux",   "width": 45},
+    {"name": "Taille d'effet",         "width": 15},
+    {"name": "Conclusion",             "width": 40},
+    {"name": "Take Home Message",      "width": 40},
+    {"name": "Domaines",               "width": 20},
+    {"name": "Lu",                     "width": 8},
+    {"name": "PDF disponible",         "width": 15},
+    {"name": "Chemin PDF",             "width": 40},
+    {"name": "Date ajout",             "width": 15},
+    {"name": "PMID",                   "width": 12},
+    {"name": "DOI",                    "width": 30},
+]
+
+DEFAULT_COLS_REVIEW = [
+    {"name": "Référence",              "width": 40},
+    {"name": "Année",                  "width": 8},
+    {"name": "Clé citable",            "width": 15},
+    {"name": "BibTeX",                 "width": 30},
+    {"name": "Type",                   "width": 20},
+    {"name": "Objectif de la revue",   "width": 45},
+    {"name": "Corpus couvert",         "width": 35},
+    {"name": "Nb articles inclus",     "width": 15},
+    {"name": "Période couverte",       "width": 20},
+    {"name": "Thèmes principaux",      "width": 45},
+    {"name": "Consensus identifiés",   "width": 40},
+    {"name": "Débats / Controverses",  "width": 40},
+    {"name": "Limites identifiées",    "width": 35},
+    {"name": "Taille d'effet globale", "width": 18},
+    {"name": "Hétérogénéité I²",      "width": 15},
+    {"name": "Take Home Message",      "width": 40},
+    {"name": "Domaines",               "width": 20},
+    {"name": "Lu",                     "width": 8},
+    {"name": "PDF disponible",         "width": 15},
+    {"name": "Chemin PDF",             "width": 40},
+    {"name": "Date ajout",             "width": 15},
+    {"name": "PMID",                   "width": 12},
+    {"name": "DOI",                    "width": 30},
+]
+
+def configure_excel_columns():
+    """Configure les champs Excel — affiche les défauts et permet de les modifier."""
+    print_step("8", "Champs du fichier Excel")
+    print("""
+  Science Torch utilise deux types de fiches :
+    • Expérimental / Méta-analyse
+    • Revue de littérature
+
+  Chaque type a ses propres colonnes. Vous pouvez utiliser les colonnes
+  par défaut ou les personnaliser (ajouter / supprimer des champs).
+    """)
+
+    use_defaults = ask_bool("Utiliser les colonnes par défaut ?", True)
+    if use_defaults:
+        print(f"  {GREEN}✓ Colonnes par défaut conservées{RESET}")
+        return {
+            "experimental": DEFAULT_COLS_EXPERIMENTAL,
+            "review":       DEFAULT_COLS_REVIEW,
+        }
+
+    # Personnalisation articles expérimentaux
+    print(f"\n  {CYAN}── Colonnes pour articles expérimentaux ──{RESET}")
+    print("  Colonnes actuelles :")
+    for i, col in enumerate(DEFAULT_COLS_EXPERIMENTAL, 1):
+        print(f"    {i:2}. {col['name']}")
+
+    exp_cols = _customize_columns(DEFAULT_COLS_EXPERIMENTAL)
+
+    # Personnalisation revues
+    print(f"\n  {CYAN}── Colonnes pour revues de littérature ──{RESET}")
+    print("  Colonnes actuelles :")
+    for i, col in enumerate(DEFAULT_COLS_REVIEW, 1):
+        print(f"    {i:2}. {col['name']}")
+
+    rev_cols = _customize_columns(DEFAULT_COLS_REVIEW)
+
+    return {
+        "experimental": exp_cols,
+        "review":       rev_cols,
+    }
+
+def _customize_columns(defaults: list) -> list:
+    """Permet d'ajouter ou supprimer des colonnes."""
+    cols = list(defaults)
+
+    # Supprimer des colonnes
+    to_remove = ask("Numéros des colonnes à supprimer (ex: 3,7,12) ou ENTRÉE pour passer", "")
+    if to_remove.strip():
+        try:
+            indices = [int(x.strip()) - 1 for x in to_remove.split(",")]
+            cols = [c for i, c in enumerate(cols) if i not in indices]
+            print(f"  {GREEN}✓ {len(indices)} colonne(s) supprimée(s){RESET}")
+        except ValueError:
+            print(f"  {YELLOW}Format invalide — aucune suppression{RESET}")
+
+    # Ajouter des colonnes
+    print("  Ajouter des colonnes (tapez ENTRÉE sans rien pour terminer) :")
+    while True:
+        new_col = ask("  Nom de la nouvelle colonne", "").strip()
+        if not new_col:
+            break
+        width = ask(f"  Largeur de la colonne '{new_col}' (défaut: 30)", "30")
+        try:
+            cols.append({"name": new_col, "width": int(width)})
+            print(f"  {GREEN}✓ Colonne '{new_col}' ajoutée{RESET}")
+        except ValueError:
+            cols.append({"name": new_col, "width": 30})
+
+    print(f"  {GREEN}✓ {len(cols)} colonne(s) configurée(s){RESET}")
+    return cols
+
 # ── Sauvegarde config ────────────────────────────────────────────────────────
 def save_config(config, config_path):
     with open(config_path, "w", encoding="utf-8") as f:
@@ -264,7 +480,7 @@ def save_config(config, config_path):
 
 # ── Installation des dépendances Python ──────────────────────────────────────
 def install_requirements():
-    print_step("8", "Installation des dépendances Python")
+    print_step("9", "Installation des dépendances Python")
     req_path = Path(__file__).parent / "requirements.txt"
     if not req_path.exists():
         print(f"  {RED}requirements.txt introuvable{RESET}")
@@ -281,12 +497,13 @@ def install_requirements():
 # ── Main ─────────────────────────────────────────────────────────────────────
 def main():
     print_header()
-    print("  Bienvenue ! Ce script va configurer votre outil de veille scientifique.")
-    print("  Vous pourrez modifier ces paramètres à tout moment dans config.json\n")
+    language = configure_language()
+    print(f"\n  {t('welcome')}")
+    print(f"  {t('edit_later')}\n")
 
     if not check_dependencies():
-        print(f"\n  {YELLOW}Certains prérequis manquent — continuez quand même ? {RESET}")
-        if not ask_bool("Continuer malgré tout?", False):
+        print(f"\n  {YELLOW}{t('continue_anyway')} {RESET}")
+        if not ask_bool(t("continue_q"), False):
             sys.exit(1)
 
     paths     = configure_paths()
@@ -296,9 +513,11 @@ def main():
     zotero    = configure_zotero()
     scheduler = configure_scheduler()
     pubmed    = configure_pubmed()
+    excel_columns = configure_excel_columns()
 
     config = {
         "version":      "1.0.0",
+        "language":     language,
         "paths":        paths,
         "domains":      domains,
         "combinations": combos,
@@ -306,6 +525,7 @@ def main():
         "zotero":       zotero,
         "scheduler":    scheduler,
         "pubmed":       pubmed,
+        "excel_columns": excel_columns,
         "article_types": {
             "experimental": {
                 "label": "Expérimental / Méta-analyse",

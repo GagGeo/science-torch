@@ -93,6 +93,59 @@ COLUMNS_REVIEW = [
 ]
 
 
+# ── Colonnes par défaut — Anglais ─────────────────────────────────────────────
+COLUMNS_EXPERIMENTAL_EN = [
+    ("Reference",                  40),
+    ("Year",                        8),
+    ("Cite key",                   15),
+    ("BibTeX",                     30),
+    ("Type",                       20),
+    ("Hypothesis/Hypotheses",      40),
+    ("Population",                 25),
+    ("N per group",                15),
+    ("Group type",                 25),
+    ("Inclusion/Exclusion criteria",35),
+    ("Method / Tools",             35),
+    ("Main results",               45),
+    ("Effect size",                15),
+    ("Conclusion",                 40),
+    ("Take Home Message",          40),
+    ("Domains",                    20),
+    ("Read",                        8),
+    ("PDF available",              15),
+    ("PDF path",                   40),
+    ("Date added",                 15),
+    ("PMID",                       12),
+    ("DOI",                        30),
+]
+
+COLUMNS_REVIEW_EN = [
+    ("Reference",                  40),
+    ("Year",                        8),
+    ("Cite key",                   15),
+    ("BibTeX",                     30),
+    ("Type",                       20),
+    ("Review objective",           45),
+    ("Corpus covered",             35),
+    ("N articles included",        15),
+    ("Period covered",             20),
+    ("Main themes",                45),
+    ("Identified consensus",       40),
+    ("Debates / Controversies",    40),
+    ("Identified limitations",     35),
+    ("Global effect size",         18),
+    ("Heterogeneity I²",           15),
+    ("Take Home Message",          40),
+    ("Domains",                    20),
+    ("Read",                        8),
+    ("PDF available",              15),
+    ("PDF path",                   40),
+    ("Date added",                 15),
+    ("PMID",                       12),
+    ("DOI",                        30),
+]
+
+
 class ExcelManager:
     """Gestion du fichier Excel de veille scientifique."""
 
@@ -101,6 +154,29 @@ class ExcelManager:
         self.domains    = config["domains"]
         self.combos     = config.get("combinations", [])
         self.wb         = None
+        # Colonnes configurables — config.json surcharge les valeurs par défaut
+        lang = config.get("language", "en")
+        default_exp = COLUMNS_EXPERIMENTAL if lang == "fr" else COLUMNS_EXPERIMENTAL_EN
+        default_rev = COLUMNS_REVIEW if lang == "fr" else COLUMNS_REVIEW_EN
+        self.columns_experimental = self._load_columns(
+            config.get("excel_columns", {}).get("experimental", []),
+            default_exp
+        )
+        self.columns_review = self._load_columns(
+            config.get("excel_columns", {}).get("review", []),
+            default_rev
+        )
+        self.lang = lang
+
+    def _load_columns(self, config_cols: list, defaults: list) -> list:
+        """
+        Charge les colonnes depuis config.json si définies,
+        sinon utilise les valeurs par défaut.
+        config_cols format : [{"name": "...", "width": 30}, ...]
+        """
+        if not config_cols:
+            return defaults
+        return [(c["name"], c.get("width", 25)) for c in config_cols]
 
     # ── Initialisation / Chargement ──────────────────────────────────────────
     def load_or_create(self):
@@ -147,7 +223,7 @@ class ExcelManager:
 
         # Déterminer le type de colonnes
         is_review = "Revues" in name
-        columns   = COLUMNS_REVIEW if is_review else COLUMNS_EXPERIMENTAL
+        columns   = self.columns_review if is_review else self.columns_experimental
 
         # Couleur de l'onglet
         if name == "Tous":
@@ -333,7 +409,7 @@ class ExcelManager:
 
     def _append_row(self, ws: Worksheet, row_data: dict, article_type: str):
         """Ajoute une ligne dans un onglet avec le style approprié."""
-        columns = COLUMNS_REVIEW if article_type == "review" else COLUMNS_EXPERIMENTAL
+        columns = self.columns_review if article_type == "review" else self.columns_experimental
         col_names = [c[0] for c in columns]
 
         row_idx = ws.max_row + 1

@@ -85,6 +85,75 @@ Sélectionne TOUS les domaines pertinents (minimum 1, maximum tous si vraiment p
 """
 
 
+PROMPT_EXPERIMENTAL_EN = """You are a scientific research assistant expert in cognitive neuroscience.
+Analyze this scientific article abstract and extract the following information as JSON.
+Respond ONLY with valid JSON, no text before or after.
+
+Abstract:
+\"\"\"
+{abstract}
+\"\"\"
+
+Expected JSON format:
+{{
+  "hypotheses": "Main study hypotheses (1-3 sentences)",
+  "population": "General description of the study population",
+  "n_per_group": "Number of participants per group (e.g. 'HC=30, MCI=25')",
+  "group_type": "Type of groups (e.g. 'Healthy controls, MCI patients')",
+  "inclusion_criteria": "Main inclusion/exclusion criteria",
+  "methods": "Tools and methods used",
+  "results": "Main results (2-4 sentences)",
+  "effect_size": "Effect size if mentioned (Cohen's d, eta², etc.), otherwise empty",
+  "conclusion": "Authors' conclusion (1-2 sentences)",
+  "take_home_message": "Main message to remember (1 simple sentence)",
+  "article_type_confidence": "experimental or review"
+}}"""
+
+PROMPT_REVIEW_EN = """You are a scientific research assistant expert in cognitive neuroscience.
+Analyze this literature review abstract and extract the following information as JSON.
+Respond ONLY with valid JSON, no text before or after.
+
+Abstract:
+\"\"\"
+{abstract}
+\"\"\"
+
+Expected JSON format:
+{{
+  "review_objective": "What question does the review address? (1-2 sentences)",
+  "corpus": "Corpus description (databases, period, selection criteria)",
+  "n_articles": "Number of included articles if mentioned, otherwise empty",
+  "period_covered": "Time period covered if mentioned, otherwise empty",
+  "main_themes": "The 3-5 main organizing themes of the review",
+  "consensus": "Points of consensus identified in the literature",
+  "debates": "Debates, controversies or open questions identified",
+  "limitations": "Limitations identified by authors or in the literature",
+  "global_effect_size": "Overall effect size if meta-analysis (e.g. d=0.7), otherwise empty",
+  "heterogeneity": "I² or other heterogeneity measure if meta-analysis, otherwise empty",
+  "take_home_message": "Main message to remember (1 simple sentence)",
+  "article_type_confidence": "review"
+}}"""
+
+PROMPT_CLASSIFY_DOMAINS_EN = """You are a scientific research assistant.
+Analyze this title and abstract and determine which research domains they belong to.
+
+Title: {title}
+Abstract: {abstract}
+
+Available domains:
+{domains_list}
+
+Respond ONLY with valid JSON:
+{{
+  "domains": ["CODE1", "CODE2"],
+  "confidence": "high/medium/low",
+  "rationale": "Brief justification (1 sentence)"
+}}
+
+Select ALL relevant domains (minimum 1, maximum all if truly relevant).
+"""
+
+
 class OllamaClient:
     """Client pour Ollama — LLM local gratuit."""
 
@@ -92,7 +161,8 @@ class OllamaClient:
         cfg = config.get("ollama", {})
         self.model    = cfg.get("model", "mistral")
         self.base_url = cfg.get("base_url", "http://localhost:11434")
-        self.timeout  = 60  # Les LLMs locaux peuvent être lents
+        self.timeout  = 60
+        self.lang     = config.get("language", "en")
 
     def _is_available(self) -> bool:
         """Vérifie qu'Ollama tourne."""
@@ -148,7 +218,7 @@ class OllamaClient:
     # ── Analyse d'un article expérimental ────────────────────────────────────
     def analyze_experimental(self, abstract: str) -> dict:
         """Extrait les infos structurées d'un article expérimental."""
-        prompt = PROMPT_EXPERIMENTAL.format(abstract=abstract[:1500])
+        prompt = (PROMPT_EXPERIMENTAL if self.lang == "fr" else PROMPT_EXPERIMENTAL_EN).format(abstract=abstract[:1500])
         raw    = self._generate(prompt)
         result = self._parse_json_response(raw)
 
@@ -174,7 +244,7 @@ class OllamaClient:
     # ── Analyse d'une revue de littérature ───────────────────────────────────
     def analyze_review(self, abstract: str) -> dict:
         """Extrait les infos structurées d'une revue de littérature."""
-        prompt = PROMPT_REVIEW.format(abstract=abstract[:1500])
+        prompt = (PROMPT_REVIEW if self.lang == "fr" else PROMPT_REVIEW_EN).format(abstract=abstract[:1500])
         raw    = self._generate(prompt)
         result = self._parse_json_response(raw)
 
@@ -207,7 +277,7 @@ class OllamaClient:
             f"- {d['short']} : {d['name']} (mots-clés: {', '.join(d['keywords'][:3])})"
             for d in domains
         )
-        prompt = PROMPT_CLASSIFY_DOMAINS.format(
+        prompt = (PROMPT_CLASSIFY_DOMAINS if self.lang == "fr" else PROMPT_CLASSIFY_DOMAINS_EN).format(
             title=title,
             abstract=abstract[:1500],
             domains_list=domains_list
