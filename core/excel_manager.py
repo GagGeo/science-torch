@@ -108,6 +108,10 @@ COLUMNS_EXPERIMENTAL_EN = [
     ("Method / Tools",             35),
     ("Main results",               45),
     ("Effect size",                15),
+    ("Statistical tests",          30),
+    ("Significance threshold",     20),
+    ("Confidence intervals",       25),
+    ("Statistical power",          20),
     ("Conclusion",                 40),
     ("Take Home Message",          40),
     ("Domains",                    20),
@@ -389,6 +393,10 @@ class ExcelManager:
                 "Méthode / Outils":    s(analysis.get("methods", "")),
                 "Résultats principaux":s(analysis.get("results", "")),
                 "Taille d'effet":      s(analysis.get("effect_size", "")),
+                "Tests statistiques":   s(analysis.get("statistical_tests", "")),
+                "Seuil de significativité": s(analysis.get("significance_threshold", "")),
+                "Intervalles de confiance": s(analysis.get("confidence_intervals", "")),
+                "Puissance statistique": s(analysis.get("statistical_power", "")),
                 "Conclusion":          s(analysis.get("conclusion", "")),
             })
         else:

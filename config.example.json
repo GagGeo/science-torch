@@ -59,5 +59,207 @@
     "email": "",
     "max_results": 50,
     "base_url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/"
+  },
+  "excel_columns": {
+    "experimental": [
+      {
+        "name": "Référence",
+        "width": 40
+      },
+      {
+        "name": "Année",
+        "width": 8
+      },
+      {
+        "name": "Clé citable",
+        "width": 15
+      },
+      {
+        "name": "BibTeX",
+        "width": 30
+      },
+      {
+        "name": "Type",
+        "width": 20
+      },
+      {
+        "name": "Hypothèse(s)",
+        "width": 40
+      },
+      {
+        "name": "Population",
+        "width": 25
+      },
+      {
+        "name": "N par groupe",
+        "width": 15
+      },
+      {
+        "name": "Type de groupe",
+        "width": 25
+      },
+      {
+        "name": "Critères incl./excl.",
+        "width": 35
+      },
+      {
+        "name": "Méthode / Outils",
+        "width": 35
+      },
+      {
+        "name": "Résultats principaux",
+        "width": 45
+      },
+      {
+        "name": "Taille d'effet",
+        "width": 15
+      },
+      {
+        "name": "Tests statistiques",
+        "width": 30
+      },
+      {
+        "name": "Seuil de significativité",
+        "width": 20
+      },
+      {
+        "name": "Intervalles de confiance",
+        "width": 25
+      },
+      {
+        "name": "Puissance statistique",
+        "width": 20
+      },
+      {
+        "name": "Conclusion",
+        "width": 40
+      },
+      {
+        "name": "Take Home Message",
+        "width": 40
+      },
+      {
+        "name": "Domaines",
+        "width": 20
+      },
+      {
+        "name": "Lu",
+        "width": 8
+      },
+      {
+        "name": "PDF disponible",
+        "width": 15
+      },
+      {
+        "name": "Chemin PDF",
+        "width": 40
+      },
+      {
+        "name": "Date ajout",
+        "width": 15
+      },
+      {
+        "name": "PMID",
+        "width": 12
+      },
+      {
+        "name": "DOI",
+        "width": 30
+      }
+    ],
+    "review": [
+      {
+        "name": "Référence",
+        "width": 40
+      },
+      {
+        "name": "Année",
+        "width": 8
+      },
+      {
+        "name": "Clé citable",
+        "width": 15
+      },
+      {
+        "name": "BibTeX",
+        "width": 30
+      },
+      {
+        "name": "Type",
+        "width": 20
+      },
+      {
+        "name": "Objectif de la revue",
+        "width": 45
+      },
+      {
+        "name": "Corpus couvert",
+        "width": 35
+      },
+      {
+        "name": "Nb articles inclus",
+        "width": 15
+      },
+      {
+        "name": "Période couverte",
+        "width": 20
+      },
+      {
+        "name": "Thèmes principaux",
+        "width": 45
+      },
+      {
+        "name": "Consensus identifiés",
+        "width": 40
+      },
+      {
+        "name": "Débats / Controverses",
+        "width": 40
+      },
+      {
+        "name": "Limites identifiées",
+        "width": 35
+      },
+      {
+        "name": "Taille d'effet globale",
+        "width": 18
+      },
+      {
+        "name": "Hétérogénéité I²",
+        "width": 15
+      },
+      {
+        "name": "Take Home Message",
+        "width": 40
+      },
+      {
+        "name": "Domaines",
+        "width": 20
+      },
+      {
+        "name": "Lu",
+        "width": 8
+      },
+      {
+        "name": "PDF disponible",
+        "width": 15
+      },
+      {
+        "name": "Chemin PDF",
+        "width": 40
+      },
+      {
+        "name": "Date ajout",
+        "width": 15
+      },
+      {
+        "name": "PMID",
+        "width": 12
+      },
+      {
+        "name": "DOI",
+        "width": 30
+      }
+    ]
   }
 }

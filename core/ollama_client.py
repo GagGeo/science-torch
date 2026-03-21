@@ -35,6 +35,10 @@ Format JSON attendu :
   "methods": "Outils et méthodes utilisés",
   "results": "Résultats principaux (2-4 phrases)",
   "effect_size": "Taille d'effet si mentionnée (Cohen's d, eta², etc.), sinon vide",
+  "statistical_tests": "Tests statistiques utilisés (ex: ANOVA, t-test, régression), sinon vide",
+  "significance_threshold": "Seuil de significativité rapporté (ex: p<.05, p=.003), sinon vide",
+  "confidence_intervals": "Intervalles de confiance si mentionnés (ex: 95% CI [0.3, 0.7]), sinon vide",
+  "statistical_power": "Puissance statistique si mentionnée (ex: 1-β=.80), sinon vide",
   "conclusion": "Conclusion des auteurs (1-2 phrases)",
   "take_home_message": "Message principal à retenir (1 phrase simple)",
   "article_type_confidence": "experimental ou review"
@@ -104,6 +108,10 @@ Expected JSON format:
   "methods": "Tools and methods used",
   "results": "Main results (2-4 sentences)",
   "effect_size": "Effect size if mentioned (Cohen's d, eta², etc.), otherwise empty",
+  "statistical_tests": "Statistical tests used (e.g. ANOVA, t-test, regression), otherwise empty",
+  "significance_threshold": "Significance threshold reported (e.g. p<.05, p=.003), otherwise empty",
+  "confidence_intervals": "Confidence intervals if mentioned (e.g. 95% CI [0.3, 0.7]), otherwise empty",
+  "statistical_power": "Statistical power if mentioned (e.g. 1-β=.80), otherwise empty",
   "conclusion": "Authors' conclusion (1-2 sentences)",
   "take_home_message": "Main message to remember (1 simple sentence)",
   "article_type_confidence": "experimental or review"
