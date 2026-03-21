@@ -61,6 +61,11 @@ def load_config() -> dict:
 
 
 def main():
+    # Support --setup flag for Windows first-run
+    if "--setup" in sys.argv:
+        run_setup()
+        return
+
     config = load_config()
 
     log_dir = config.get("paths", {}).get(

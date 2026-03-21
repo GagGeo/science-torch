@@ -20,6 +20,14 @@
 - 🔔 **macOS notifications** when new articles are found
 - 📄 **Maximized PDF access** via 5 open-access sources (PMC, Europe PMC, Unpaywall, Semantic Scholar, OpenAlex)
 
+### Platform support
+
+| Platform | Status | Installer |
+|---|---|---|
+| macOS | ✅ Full support | `.app` + `.dmg` via `bash build.sh` |
+| Linux | ✅ Full support | Run `python3 main.py` directly |
+| Windows | ✅ Full support | `.exe` via `build_windows.bat` |
+
 ### How it works
 
 1. You define your research domains and PubMed keywords
@@ -56,14 +64,22 @@ Any model available via `ollama list` can be used. Larger models (e.g. `llama3`,
 
 ### Installation
 
+**macOS / Linux:**
 ```bash
 git clone https://github.com/GagGeo/science-torch.git
 cd science-torch
 bash install.sh   # installs dependencies + runs configuration wizard
-bash build.sh     # creates Science Torch.app on your desktop
+bash build.sh     # creates Science Torch.app on your desktop (macOS)
 ```
 
-See [INSTALLATION_GUIDE.md](INSTALLATION_GUIDE.md) for detailed instructions.
+**Windows:**
+```
+git clone https://github.com/GagGeo/science-torch.git
+cd science-torch
+build_windows.bat
+```
+
+See [INSTALLATION_GUIDE.md](INSTALLATION_GUIDE.md) (macOS/Linux) or [INSTALLATION_GUIDE_WINDOWS.md](INSTALLATION_GUIDE_WINDOWS.md) (Windows) for detailed instructions.
 
 ### Built with
 
