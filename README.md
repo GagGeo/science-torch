@@ -80,7 +80,7 @@ See [INSTALLATION_GUIDE.md](INSTALLATION_GUIDE.md) for detailed instructions.
 
 ### License
 
-MIT — free to use, modify and distribute.
+Apache 2.0 — free to use, modify and distribute, with attribution and patent protection.
 
 ---
 
@@ -147,4 +147,4 @@ Voir [GUIDE_INSTALLATION.md](GUIDE_INSTALLATION.md) pour les instructions détai
 
 ### Licence
 
-MIT — libre d'utilisation, modification et distribution.
+Apache 2.0 — libre d'utilisation, modification et distribution, avec attribution et protection des brevets.
